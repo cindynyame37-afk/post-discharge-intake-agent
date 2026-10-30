@@ -2,6 +2,14 @@
 
 This repository holds unit tests for the **symptom flagging** step of my final project, an adaptive intake agent that reads messages from heart failure and COPD patients after hospital discharge. The step uses the ConText component of [medspaCy](https://github.com/medspacy/medspacy) to decide whether each symptom a patient mentions is present, denied, uncertain, historical, hypothetical, or about a family member. medspaCy is the citable source; the tests check the exact calls my workflow makes.
 
+## Wire diagram
+
+ConText (medspaCy) sits early in the intake path: it takes the patient message as a string and returns a list of symptom mentions with negation and other flags, which the condition-tag and slot-fill steps then use.
+
+De-identification (Presidio) is no longer on the main path; it runs only when a transcript leaves the care team. (The diagram below is my Session 5 version, which still shows it first.)
+
+![Workflow wire diagram](docs/wire_diagram.png)
+
 ## Contract
 
 | | Type | Description |
