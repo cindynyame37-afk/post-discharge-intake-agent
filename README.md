@@ -20,8 +20,9 @@ De-identification (Presidio) is no longer on the main path; it runs only when a 
 ## Tested versions
 
 - medspacy 1.3.1
-- spacy 3.8.2
+- spacy 3.8.16
 - pytest 8.3.4
+- Python 3.13
 
 ## Setup and running the tests
 
