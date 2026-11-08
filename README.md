@@ -1,5 +1,7 @@
 # post-discharge-intake-agent
 
+[![tests](https://github.com/cindynyame37-afk/post-discharge-intake-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/cindynyame37-afk/post-discharge-intake-agent/actions/workflows/tests.yml)
+
 This repository holds unit tests for the **symptom flagging** step of my final project, an adaptive intake agent that reads messages from heart failure and COPD patients after hospital discharge. The step uses the ConText component of [medspaCy](https://github.com/medspacy/medspacy) to decide whether each symptom a patient mentions is present, denied, uncertain, historical, hypothetical, or about a family member. medspaCy is the citable source; the tests check the exact calls my workflow makes.
 
 ## Wire diagram
