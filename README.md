@@ -44,11 +44,11 @@ pip install -r requirements.txt
 pytest -v
 ```
 
-Expected result: **14 passed, 6 xfailed**.
+Expected result: **15 passed, 6 xfailed**.
 
 ## What the tests cover
 
-- **Typical inputs:** denied symptoms are flagged as negated and reported symptoms are not; symptoms about a family member, uncertain, historical and hypothetical symptoms are flagged; negation stops at "but" and at the end of a sentence.
+- **Typical inputs:** denied symptoms are flagged as negated and reported symptoms are not; symptoms about a family member, uncertain, historical and hypothetical symptoms are flagged; negation stops at "but" and at the end of a sentence; one "no" covers a list of symptoms.
 - **Edge cases:** an empty message or a message with no symptoms returns an empty list; matching ignores capital letters; very long messages are handled.
 - **Invalid inputs:** non-string input such as `None` or a number raises an error.
 

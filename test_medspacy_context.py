@@ -398,3 +398,9 @@ def test_none_raises_value_error(run_protocol):
 def test_number_raises_value_error(run_protocol):
     with pytest.raises(ValueError):
         run_protocol(98.6)
+
+
+def test_one_negation_covers_two_symptoms(run_protocol):
+    out = run_protocol("I have no fever or cough.")
+    negated = [m["text"] for m in out if m["is_negated"]]
+    assert len(negated) == 2  # "no" covers both symptoms in the list
