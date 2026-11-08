@@ -403,4 +403,4 @@ def test_number_raises_value_error(run_protocol):
 def test_one_negation_covers_two_symptoms(run_protocol):
     out = run_protocol("I have no fever or cough.")
     negated = [m["text"] for m in out if m["is_negated"]]
-    assert len(negated) == 3  # wrong on purpose: only two symptoms are denieda
+    assert len(negated) == 2  # "no" covers both symptoms in the list
