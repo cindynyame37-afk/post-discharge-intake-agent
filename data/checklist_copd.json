@@ -1,0 +1,12 @@
+{
+  "condition": "COPD",
+  "source_note": "mMRC dyspnea scale grades 0-4 (paraphrased). Other slots and question wording are mine, pending a GOLD citation.",
+  "slots": {
+    "mmrc_grade":             {"required": true,  "question": "Which fits you best today? 0: breathless only with hard exercise. 1: breathless hurrying or walking up a slight hill. 2: walk slower than people your age or stop to catch your breath on level ground. 3: stop for breath after about 100 yards or a few minutes on level ground. 4: too breathless to leave the house or breathless when dressing. Reply with the number."},
+    "breathless_at_rest":     {"required": true,  "question": "Do you get short of breath while sitting still or lying down?"},
+    "sputum_change":          {"required": true,  "question": "Has your phlegm changed color (yellow or green) or increased?"},
+    "fever":                  {"required": true,  "question": "Have you had a fever or chills?"},
+    "rescue_inhaler_per_day": {"required": true,  "question": "How many times a day are you using your rescue inhaler?"},
+    "chest_pain":             {"required": true,  "question": "Have you had any chest pain or chest tightness?"}
+  }
+}

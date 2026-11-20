@@ -2,7 +2,55 @@
 
 [![tests](https://github.com/cindynyame37-afk/post-discharge-intake-agent/actions/workflows/tests.yml/badge.svg)](https://github.com/cindynyame37-afk/post-discharge-intake-agent/actions/workflows/tests.yml)
 
-This repository holds unit tests for the **symptom flagging** step of my final project, an adaptive intake agent that reads messages from heart failure and COPD patients after hospital discharge. The step uses the ConText component of [medspaCy](https://github.com/medspacy/medspacy) to decide whether each symptom a patient mentions is present, denied, uncertain, historical, hypothetical, or about a family member. medspaCy is the citable source; the tests check the exact calls my workflow makes.
+An adaptive checklist intake agent for messages from heart failure (HF) and COPD patients after hospital discharge. It reads the patient's message, fills a condition-specific checklist, asks one follow-up question at a time (up to three turns) until the checklist is complete, applies red-flag rules, and routes every case to a person: `nurse_now`, `coordinator_same_day`, or the coordinator queue. It never calls a patient or places an order.
+
+**Status: rough draft (Session 11).** Runs end to end on synthetic data only. Not for use with real patients.
+
+## Run it
+
+```bash
+pip install -r requirements.txt
+python run_intake.py synthetic/hf_understated.json      # one case
+python run_intake.py synthetic/*.json                   # all synthetic cases
+pytest -v                                               # all unit tests
+```
+
+Each run prints the route record and appends it to `outputs/audit_log.json` (git-ignored), with the transcript de-identified by Presidio.
+
+**Slot fill (N3)** uses an offline rule-based stand-in by default, so the tests need no API key. To use Gemini instead, set `USE_LLM=1` and `GEMINI_API_KEY` (and optionally `GEMINI_MODEL`) as environment variables. Never put a key in the code or the repository. The Gemini path has not yet been run in the tests.
+
+## Files
+
+| File | What it is |
+|---|---|
+| `run_intake.py` | The whole workflow; one section per wire-diagram node |
+| `data/checklist_hf.json`, `data/checklist_copd.json` | Checklist slots and the question asked for each |
+| `synthetic/*.json` | Invented cases, including matched direct vs understated pairs |
+| `test_workflow.py` | Unit tests for every node plus end-to-end runs |
+| `test_medspacy_context.py` | Unit tests for the medspaCy ConText atomic protocol |
+
+## Components
+
+| Node | Type | What it does |
+|---|---|---|
+| ConText (medspaCy 1.3.1) | Atomic protocol | Flags each symptom as present, denied, uncertain, historical, hypothetical or family |
+| N2 Condition tag | Disposable | Keyword list sets HF, COPD or unclear; unclear goes to a person |
+| N3 Slot fill | Disposable | Fills checklist slots (offline rules, or Gemini at temperature 0); unsure answers stay empty |
+| Pydantic 2.13.5 | Atomic protocol | Checks the slot record against the checklist schema before it is used |
+| N4 Completeness gate | Disposable | Lists empty required slots and picks one question; after 3 turns, sends the partial record to a person |
+| N5a HF red-flag rules | Disposable | AHA warning signs: weight gain of 3 lb in a day or 5 lb in a week, breathless at rest, new swelling, chest pain, not taking the water pill |
+| N5b COPD red-flag rules | Disposable | My provisional rules (breathless at rest, mMRC 4, sputum change with fever, rescue inhaler 4+ times a day, chest pain), pending a GOLD citation |
+| N6 Understatement flag | Disposable | Marks hedged wording on a case that fired a red flag; does not re-route |
+| N7 Route | Disposable | Any red flag goes to `nurse_now`, otherwise `coordinator_same_day` |
+| Presidio 2.2.366 | Atomic protocol | De-identifies the transcript only when it leaves the care team (audit log) |
+
+Expected test result: **41 passed, 7 xfailed**.
+
+---
+
+# Earlier work: ConText unit tests
+
+The section below documents the **symptom flagging** step on its own.
 
 ## Wire diagram
 
@@ -44,7 +92,7 @@ pip install -r requirements.txt
 pytest -v
 ```
 
-Expected result: **15 passed, 6 xfailed**.
+Expected result for this file alone: **15 passed, 6 xfailed**.
 
 ## What the tests cover
 
@@ -61,6 +109,7 @@ These are marked `xfail(strict=True)`, so the suite fails loudly if a future med
 - "Chest pain? No." is not read as denied, because the two sentences are split.
 - "I'm not sure if..." is read as negated instead of uncertain.
 - "I might have some swelling" is not read as uncertain.
+- In the full workflow, "No improvement in my shortness of breath" therefore misses the breathless-at-rest red flag (`test_workflow.py`, xfail).
 - Lay wording such as "short of breath" is not matched, because the symptom term is "shortness of breath". That is a gap in my term list, not in ConText.
 
 ## Data

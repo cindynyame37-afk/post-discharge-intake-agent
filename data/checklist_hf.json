@@ -1,0 +1,12 @@
+{
+  "condition": "HF",
+  "source_note": "Slots follow AHA heart failure warning signs (weight gain, breathlessness, swelling). Question wording is mine.",
+  "slots": {
+    "weight_gain_lb":     {"required": true,  "question": "Have you weighed yourself today? How many pounds have you gained or lost since you left the hospital, and over how many days?"},
+    "weight_gain_days":   {"required": true,  "question": "Over how many days did that weight change happen?"},
+    "breathless_at_rest": {"required": true,  "question": "Do you get short of breath while sitting still or lying down?"},
+    "leg_swelling":       {"required": true,  "question": "Is there any new or worse swelling in your feet, ankles or legs?"},
+    "chest_pain":         {"required": true,  "question": "Have you had any chest pain or chest tightness?"},
+    "taking_water_pill":  {"required": true,  "question": "Are you taking your water pill every day as prescribed?"}
+  }
+}
